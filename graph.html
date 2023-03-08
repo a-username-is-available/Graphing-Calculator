@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph</title>
+</head>
+<body>
+    <style>
+        div {
+            margin: 0;
+            height: 100%;
+            z-index: -1;
+        }
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        input {
+            margin: 1em;
+            width: calc(100% - 3em);
+            position: absolute;
+            border: none;
+            font-family: 'SF Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: 18px;
+            outline: none;
+            background: #EEE;
+            border-radius: 5px;
+            padding: .5em;
+            transition: all 300ms cubic-bezier(0.3, 0, 0.3, 1);
+        }
+        .wrong {
+            background: #FDD;
+            transition: all 300ms cubic-bezier(0.3, 0, 0.3, 1);
+        }
+    </style>
+
+    <input placeholder="Type Expression Here"/>
+    <div id="canvas-container">
+        <canvas></canvas>
+    </div>
+
+    <script>
+        const canvas = document.querySelector("canvas")
+        const input = document.querySelector("input")
+
+        const { sin, cos, tan, sqrt, floor, ceil, round,
+                abs, acos, asin, atan, log, log2, log10,
+                random, PI: pi, E: e
+              } = Math
+
+        let width, height
+        let halfX, halfY
+        let xUnit, yUnit
+        let xCount, yCount
+        
+        const context = canvas.getContext("2d")
+        context.lineWidth = 2
+        
+        function drawGrid() {
+            context.fillStyle = "lightgray"
+            for (let x = -xCount; x < xCount; x++)
+                context.fillRect(halfX + Math.floor(x) * xUnit, 0,
+                                 1, height)
+            
+            for (let y = -yCount; y < yCount; y++) 
+                context.fillRect(0, halfY + Math.floor(y) * yUnit,
+                                 width, 1)
+            
+            context.fillStyle = "gray"
+            context.fillRect(0, halfY - 2, width, 2)
+            context.fillRect(halfX - 2, 0, 2, height)
+        }
+        
+        function drawExpression() {
+            if (input !== document.activeElement) return
+            // free xss
+            try {
+                context.clearRect(0, 0, width, height)
+                drawGrid()
+                context.strokeStyle = "orange"
+                
+                context.beginPath()
+                for (let x = -xCount; x < xCount; x += .25) {
+                    const y = Math.min(Math.max(-eval(
+                        `x => ${input.value}`)(x), -100), 100)
+                        context.lineTo((x + xCount) * xUnit,
+                        (y + yCount) * yUnit)
+                    }
+                    context.stroke()
+                    
+                    input.classList.remove("wrong")
+            } catch {
+                if (input.value.trim() === "") 
+                    return input.classList.remove("wrong")
+                input.classList.add("wrong")
+            }
+        }
+        
+        function resizeCanvas() {
+            const { clientHeight, clientWidth } =
+                document.querySelector("#canvas-container")
+            canvas.width = clientWidth
+            canvas.height = clientHeight;
+            ({ width, height } = canvas);
+            ([ halfX, halfY ] = [ width / 2, height / 2]);
+            ([ xUnit, yUnit ] = [ 20, 20 ]);
+            ([ xCount, yCount ] = [ halfX / xUnit, halfY / xUnit])
+            drawGrid()
+            drawExpression()
+        }
+        resizeCanvas()
+
+        document.addEventListener("keyup", drawExpression)
+        window.addEventListener('resize', resizeCanvas)
+    </script>
+</body>
+</html>
