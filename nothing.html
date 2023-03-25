@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nothing</title>
+</head>
+<body>
+    <style>
+        span {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+    </style>
+    <div id="nothing">
+        <span>
+            nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing
+            nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing
+            nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing
+            nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing
+            nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing
+            nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing
+            nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing
+            nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing
+            nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing nothing
+            nothing
+        </span>
+    </div>
+    <script>
+        const nothing = document.querySelector("#nothing")
+        const max = 3402823669209385000000000000000000000
+        let counter = 0
+        const observer = new IntersectionObserver(e => {
+            if (!e[0].isIntersecting) return
+            if (counter === max) return observer.unobserve(e[0].target)
+            const newSpan = document.createElement("span")
+            newSpan.innerText = "nothing ".repeat(100)
+            nothing.append(newSpan)
+            observer.unobserve(e[0].target)
+            observer.observe(newSpan)
+            counter++
+        })
+        observer.observe(document.querySelector("span:last-child"))
+    </script>
+</body>
+</html>
