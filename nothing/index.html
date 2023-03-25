@@ -33,13 +33,17 @@
         const observer = new IntersectionObserver(e => {
             if (!e[0].isIntersecting) return
             if (counter === max) return observer.unobserve(e[0].target)
-            const newSpan = document.createElement("span")
-            newSpan.innerText = "nothing ".repeat(100)
-            nothing.append(newSpan)
+
+            for (let i = 0; i < 5; i++) {
+                const newSpan = document.createElement("span")
+                newSpan.innerText = "nothing ".repeat(100)
+                nothing.append(newSpan)
+            }
+        
             observer.unobserve(e[0].target)
-            observer.observe(newSpan)
+            observer.observe(document.querySelector("span:last-child"))
             counter++
-        })
+        }, { rootMargin: "500px" })
         observer.observe(document.querySelector("span:last-child"))
     </script>
 </body>
